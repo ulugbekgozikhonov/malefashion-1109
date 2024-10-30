@@ -1,8 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView, DeleteView, UpdateView
 
 from .models import Banner
 from products.models import *
+
 
 # def home_view(request):
 # 	banners = Banner.objects.filter(status=True).all()
@@ -23,9 +24,18 @@ class HomeView(ListView):
 
 def shop_view(request):
 	products = Product.objects.order_by("-created_at")
-
+	categories = Category.objects.order_by("-created_at")
+	brands = Brand.objects.order_by("-created_at")
+	colors = Color.objects.all()
+	sizes = Size.objects.all()
+	tags = Tag.objects.all()
 	context = {
-		"products": products
+		"products": products,
+		"categories": categories,
+		"brands": brands,
+		"colors": colors,
+		'sizes': sizes,
+		"tags": tags,
 	}
 
 	return render(request, "shop.html", context)
@@ -41,3 +51,12 @@ def contact_view(request):
 
 def about_view(request):
 	return render(request, 'about.html')
+
+
+def shop_detail_view(request, pk):
+	product = Product.objects.filter(id=pk).first()
+
+	context = {
+		"product": product
+	}
+	return render(request, "shop-details.html", context)
